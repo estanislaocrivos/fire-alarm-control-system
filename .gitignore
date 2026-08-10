@@ -1,0 +1,18 @@
+# Virtual environment
+.venv/
+
+# Cache files
+.cache/
+.DS_Store
+__pycache__/
+.pytest_cache/
+
+# Build output directories
+build/
+docs/
+
+# Output files
+checkers.txt
+
+# IDE
+.vscode/

@@ -1,0 +1,15 @@
+cfgv==3.5.0
+colorlog==6.10.1
+distlib==0.4.0
+filelock==3.20.3
+gcovr==8.6
+identify==2.6.16
+Jinja2==3.1.6
+lxml==6.0.2
+MarkupSafe==3.0.3
+nodeenv==1.10.0
+platformdirs==4.5.1
+pre_commit==4.5.1
+Pygments==2.19.2
+PyYAML==6.0.3
+virtualenv==20.36.1
