@@ -1,4 +1,4 @@
-# bare-metal-template
+# Bare-metal C project template for multi-platform embedded development
 
 ## Repository structure
 
