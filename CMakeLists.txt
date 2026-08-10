@@ -23,3 +23,10 @@ add_subdirectory(external/c-libraries)
 
 add_executable(my-app src/main.c)
 target_link_libraries(my-app PRIVATE board)
+
+if(CMAKE_OBJCOPY)
+    add_custom_command(TARGET my-app POST_BUILD
+        COMMAND ${CMAKE_OBJCOPY} -O ihex -R .eeprom $<TARGET_FILE:my-app> $<TARGET_FILE:my-app>.hex
+        COMMENT "Generating Intel HEX image ($<TARGET_FILE:my-app>.hex)"
+    )
+endif()
