@@ -1,0 +1,68 @@
+# yaml-language-server: $schema=https://json.schemastore.org/clangd.json
+CompileFlags:
+  Add:
+    - -xc
+    - -std=c99
+    # Silence XC8-specific attributes/pragmas that clang doesn't recognize
+    - -Wno-unknown-pragmas
+    - -Wno-unknown-attributes
+    # Broad warning surface for MISRA-flavored analysis in the editor
+    - -Wall
+    - -Wextra
+    - -Wpedantic
+    - -Wconversion
+    - -Wshadow
+    - -Wstrict-prototypes
+    - -Wmissing-prototypes
+    - -Wmissing-declarations
+    - -Wold-style-definition
+    - -Wdouble-promotion
+    - -Wnull-dereference
+    - -Wformat=2
+    - -Wswitch-default
+    - -Wswitch-enum
+    - -Wundef
+    - -Wcast-align
+    - -Wcast-qual
+    - -Wpointer-arith
+    - -Wwrite-strings
+    - -Wredundant-decls
+    - -Wfloat-equal
+  Remove:
+    - -mcpu=*
+    - -mdfp=*
+    - -memi=*
+    - -fasmfile
+    - -maddrqual=*
+    - -xassembler-with-cpp
+    - -mwarn=*
+    - -Wa,*
+    - -msummary=*
+    - -ginhx32
+    - -mno-keep-startup
+    - -mno-download
+    - -mdefault-config-bits
+    - -mstack=*
+    - -gdwarf-3
+  Compiler: clang
+  CompilationDatabase: build/
+
+Diagnostics:
+  UnusedIncludes: None
+  Suppress:
+    - drv_unknown_argument
+    - drv_unsupported_option_argument
+
+# Hover and completion
+Hover:
+  ShowAKA: true
+
+Completion:
+  AllScopes: true
+
+# Inlay hints (inferred types, parameter names)
+InlayHints:
+  Enabled: true
+  ParameterNames: true
+  DeducedTypes: true
+  Designators: true

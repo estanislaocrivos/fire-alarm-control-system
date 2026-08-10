@@ -1,0 +1,3 @@
+[submodule "external/c-libraries"]
+	path = external/c-libraries
+	url = git@github.com:estanislaocrivos/c-libraries.git
