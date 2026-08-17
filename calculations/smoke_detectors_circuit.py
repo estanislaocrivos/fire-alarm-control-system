@@ -1,3 +1,12 @@
+# Circuit topology (single sensor per bus, low-side sensing):
+#
+# INPUT_VOLTAGE_V ---> SMOKE_SENSOR (in parallel with R_EOL) ---> R_SHUNT ---> # GND
+#
+# Sensor and R_EOL are in parallel. Sensor
+# sinks SMOKE_SENSOR_STANDBY_CURRENT_A at rest and
+# SMOKE_SENSOR_ALARM_CURRENT_A when it alarms; R_EOL is sized so it
+# alone contributes EOL_STANDBY_CURRENT_A at rest.
+
 INPUT_VOLTAGE_V = 24
 MIN_SENSOR_VOLTAGE_V = 12
 ADC_REF_VOLTAGE_V = 5
@@ -11,7 +20,18 @@ SMOKE_SENSOR_ALARM_CURRENT_A = 70e-3
 N_SENSORS_PER_BUS = 1
 
 R_SHUNT_OHM = 56  # 4 resistors of 220 ohm in parallel => 55 ohm
-EOL_STANDBY_CURRENT_A = 2e-3
+R_EOL_OHM = 11000  # single resistor, close enough to a derived target
+
+# Bus okay, no alarm, case analysis:
+
+eol_standby_current_a = (
+    INPUT_VOLTAGE_V - SMOKE_SENSOR_STANDBY_CURRENT_A * R_SHUNT_OHM
+) / (R_EOL_OHM + R_SHUNT_OHM)
+print(f"eol_standby_current_a = {eol_standby_current_a}")
+
+standby_current_total_a = (
+    eol_standby_current_a + N_SENSORS_PER_BUS * SMOKE_SENSOR_STANDBY_CURRENT_A
+)
 
 # Bus okay, alarm, case analysis:
 # Worst case: the single sensor on the bus alarms. R_SHUNT alone (no
@@ -36,25 +56,12 @@ else:
 # The standby current (EOL contribution + the sensor's own quiescent
 # draw) must stay resolvable above the ADC's noise floor.
 
-standby_current_total_a = (
-    EOL_STANDBY_CURRENT_A + N_SENSORS_PER_BUS * SMOKE_SENSOR_STANDBY_CURRENT_A
-)
 oc_adc_voltage_v = standby_current_total_a * R_SHUNT_OHM
 
 if oc_adc_voltage_v > ADC_MIN_MARGIN_VOLTAGE_V:
     print(f"oc_adc_voltage_v = {oc_adc_voltage_v} (detectable by the ADC)")
 else:
     print(f"oc_adc_voltage_v = {oc_adc_voltage_v} (not detectable by the ADC)")
-
-# Bus okay, no alarm, case analysis:
-# Solve for the R_EOL value whose own current contribution equals
-# EOL_STANDBY_CURRENT_A, given the drop already caused by R_SHUNT at
-# standby_current_total_a.
-
-r_eol_ohm = (
-    INPUT_VOLTAGE_V - standby_current_total_a * R_SHUNT_OHM
-) / EOL_STANDBY_CURRENT_A
-print(f"r_eol_ohm = {r_eol_ohm}")  # 10k + 1k + (1k | 1k) + 220 + 220 => 11940
 
 # Short-circuit in the bus, case analysis:
 # TODO: no series current-limiting element (fuse/PTC) is implemented in

@@ -190,9 +190,85 @@ safety), ISO/IEC/IEEE 29148 (especificación de requerimientos).
   verificar dispositivos individualmente sin generar una notificación
   general de alarma. *Prioridad:* Must.
 
+- **FR-UI-006** — El modo Prueba/Mantenimiento deberá soportar un sub-modo
+  de "walk test": al activar un sensor o botonera, el sistema deberá dar
+  una indicación local breve (no disparar notificación general) y
+  registrar en el log qué dispositivo respondió. *Racional:* permite a un
+  único técnico verificar todos los dispositivos del edificio sin
+  necesidad de evacuar. *Prioridad:* Should.
+
+- **FR-UI-007** — El sistema deberá permitir forzar una notificación
+  general de evacuación desde el panel sin requerir autenticación,
+  independientemente del estado de los sensores automáticos. *Racional:*
+  mismo principio que FR-UI-001 — activar una notificación de emergencia
+  debe ser de acceso irrestricto; cubre el caso en que el fuego se detecta
+  visualmente antes de que lo haga un sensor. *Prioridad:* Must.
+
 ---
 
-## 9. Arquitectura de bus y aislación de fallos (Roadmap)
+## 9. Detección inteligente
+
+- **FR-DET-001** — El sistema deberá soportar sensores con más de un
+  criterio de detección (p. ej. humo + temperatura o tasa de aumento de
+  temperatura), correlacionando ambas lecturas antes de escalar a
+  condición de Alarma. *Racional:* reduce falsos positivos por polvo,
+  vapor u otras fuentes no relacionadas a fuego real. *Prioridad:* Should.
+
+- **FR-DET-002** — El sistema deberá monitorear la deriva de sensibilidad
+  de cada sensor de humo a lo largo del tiempo (p. ej. por acumulación de
+  suciedad en la cámara óptica) y generar un evento de Falla si la
+  sensibilidad sale del rango certificado. *Racional:* un sensor sucio
+  puede volverse insensible sin que se note hasta que ya es tarde.
+  *Prioridad:* Could (depende de si el sensor elegido expone esta info).
+
+---
+
+## 10. Tiempos de respuesta
+
+- **FR-TIME-001** — El sistema deberá activar las salidas de notificación
+  (sirena, luces) dentro de un máximo de 1 segundo desde que un sensor o
+  botonera cruza el umbral de alarma, en el camino de un solo sensor sin
+  verificación cruzada. *Racional:* EN 54-2/NFPA 72 usan ~10 segundos como
+  techo de referencia para sistemas grandes con buses de muchos
+  dispositivos; en un sistema de este tamaño, con un MCU dedicado, 1
+  segundo es holgadamente alcanzable y deja margen de sobra. *Prioridad:*
+  Must.
+
+- **FR-TIME-002** — El camino de verificación cruzada (FR-VER-001) no
+  deberá tener un límite fijo de latencia, ya que depende de que un
+  segundo sensor físico cruce su propio umbral; el sistema deberá evaluar
+  la condición del segundo sensor de forma continua, sin introducir
+  demoras artificiales de software. *Prioridad:* Must.
+
+---
+
+## 11. Exclusión y bypass de subsistemas y zonas
+
+- **FR-EXC-001** — El sistema deberá permitir excluir (bypass)
+  individualmente una zona, sensor, salida o subsistema (p. ej.
+  comunicador, extinción automática) sin necesidad de desconectar
+  físicamente el cableado. *Prioridad:* Must.
+
+- **FR-EXC-002** — Mientras exista al menos una exclusión activa, el
+  sistema deberá mostrar una indicación persistente y visible en el
+  display, distinta de los estados Normal/Alarma/Falla. *Racional:* evita
+  que una exclusión de mantenimiento quede olvidada. *Prioridad:* Must.
+
+- **FR-EXC-003** — Activar o desactivar una exclusión deberá requerir la
+  misma autenticación que silenciar/resetear (FR-UI-002), y deberá
+  registrarse en el log de eventos (FR-LOG-001) con identificación del
+  usuario y timestamp. *Prioridad:* Must.
+
+- **FR-EXC-004** — Una zona o sensor excluido no deberá poder disparar
+  Alarma ni contribuir a la verificación cruzada (FR-VER-001) mientras la
+  exclusión esté activa, pero sí deberá seguir siendo supervisado
+  eléctricamente y generar un evento de Falla si su circuito se abre o
+  cortocircuita. *Racional:* excluir la respuesta automática no debería
+  significar dejar de vigilar el cableado. *Prioridad:* Should.
+
+---
+
+## 12. Arquitectura de bus y aislación de fallos (Roadmap)
 
 - **FR-ARCH-001** (Roadmap) — El cableado de bus/lazo de dispositivos podrá
   implementarse en topología Clase A (loop que sale y vuelve al panel), de
@@ -210,13 +286,12 @@ safety), ISO/IEC/IEEE 29148 (especificación de requerimientos).
 
 ---
 
-## 10. Roadmap / fuera de alcance V1
+## 13. Roadmap / fuera de alcance por esta versión
 
 Ítems identificados durante el análisis, deliberadamente diferidos:
 
 - FR-CTRL-002 — Redundancia de controlador con arbitraje/failover.
 - FR-ARCH-001 / FR-ARCH-002 — Topología Clase A y módulos aisladores de bus.
-- Tiempos máximos de latencia detección → notificación.
 - Autochequeo (POST) al arranque y diagnóstico periódico.
 - Comunicación con central de monitoreo externa / contactos secos hacia
   bomberos.
