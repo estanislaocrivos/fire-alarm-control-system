@@ -42,7 +42,7 @@ safety), ISO/IEC/IEEE 29148 (especificación de requerimientos).
 
 - **FR-SEN-002** — El sistema deberá distinguir al menos cuatro estados
   eléctricos por línea de sensor: circuito abierto (falla), corriente de
-  reposo (normal), corriente de disparo (alarma) y cortocircuito (falla).
+  reposo (normal), corriente de disparo (alarma).
   *Prioridad:* Must.
 
 - **FR-SEN-003** — El sistema deberá aplicar el mismo principio de
@@ -58,6 +58,8 @@ safety), ISO/IEC/IEEE 29148 (especificación de requerimientos).
 ---
 
 ## 2. Supervisión de circuitos de salida (sirena, luces, rociado)
+
+(TBD, no hay capacidad electrónica para verificar el estado de un actuador)
 
 - **FR-OUT-001** — El sistema deberá supervisar cada línea de salida
   (sirena, luces, rociado) mediante resistencia de fin de línea y sensado
