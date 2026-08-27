@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.13)
-project(my-app LANGUAGES C)
+project(fire-alarm-control-system LANGUAGES C)
 
 set(BOARD "" CACHE STRING "Target board (see external/c-libraries/boards/)")
 set(MCU_FLAGS "" CACHE STRING "Compiler/linker flags for the target MCU (e.g. -mmcu=atmega2560)")
@@ -21,12 +21,13 @@ endif()
 
 add_subdirectory(external/c-libraries)
 
-add_executable(my-app src/main.c)
-target_link_libraries(my-app PRIVATE board)
+add_executable(fire-alarm-control-system src/main.c)
+target_link_libraries(fire-alarm-control-system PRIVATE board)
+target_include_directories(fire-alarm-control-system PRIVATE ${CMAKE_SOURCE_DIR}/inc)
 
 if(CMAKE_OBJCOPY)
-    add_custom_command(TARGET my-app POST_BUILD
-        COMMAND ${CMAKE_OBJCOPY} -O ihex -R .eeprom $<TARGET_FILE:my-app> $<TARGET_FILE:my-app>.hex
-        COMMENT "Generating Intel HEX image ($<TARGET_FILE:my-app>.hex)"
+    add_custom_command(TARGET fire-alarm-control-system POST_BUILD
+        COMMAND ${CMAKE_OBJCOPY} -O ihex -R .eeprom $<TARGET_FILE:fire-alarm-control-system> $<TARGET_FILE:fire-alarm-control-system>.hex
+        COMMENT "Generating Intel HEX image ($<TARGET_FILE:fire-alarm-control-system>.hex)"
     )
 endif()
