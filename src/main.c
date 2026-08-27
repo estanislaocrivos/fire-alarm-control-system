@@ -1,7 +1,4 @@
-#include "board.h"
-
-#include <stdbool.h>
-#include <stdint.h>
+#include "main.h"
 
 /* ========================================================================== */
 
@@ -20,11 +17,6 @@ struct task
 static struct task   task_list[MAX_TASK_COUNT];
 static uint8_t       task_count = 0;
 static volatile bool tick_flag  = false;
-
-static GPIO_DEFINE(
-    led_1, &PLATFORM_GPIO_OPS, GPIO_B4_ID, GPIO_DIGITAL, GPIO_OUTPUT); /* D10 */
-static GPIO_DEFINE(
-    led_2, &PLATFORM_GPIO_OPS, GPIO_B5_ID, GPIO_DIGITAL, GPIO_OUTPUT); /* D11 */
 
 void scheduler_dispatcher(void)
 {
@@ -78,6 +70,20 @@ ISR(TIMER1_COMPA_vect)
 }
 
 /* ========================================================================== */
+
+static struct gpio led_1
+    = {.ops             = &PLATFORM_GPIO_OPS,
+       .id              = GPIO_B4_ID,
+       .type            = GPIO_DIGITAL,
+       .direction       = GPIO_OUTPUT,
+       .was_initialized = false};
+
+static struct gpio led_2
+    = {.ops             = &PLATFORM_GPIO_OPS,
+       .id              = GPIO_B5_ID,
+       .type            = GPIO_DIGITAL,
+       .direction       = GPIO_OUTPUT,
+       .was_initialized = false};
 
 void task_led_1(void)
 {
